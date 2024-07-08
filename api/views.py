@@ -5,8 +5,11 @@ from .serializers import UserSerializers
 from .models import User
 from rest_framework import status
 from django.http import Http404
+from rest_framework.parsers import MultiPartParser, FormParser
     
 class User_APIView(APIView):    
+  parser_classes = (MultiPartParser, FormParser)
+
   def get(self, request, format=None, *args, **kwargs):
     user = User.objects.all()
     serializer = UserSerializers(user, many=True)
