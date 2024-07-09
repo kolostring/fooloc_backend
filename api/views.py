@@ -84,8 +84,13 @@ class SessionView(APIView):
 
 # Business related Views
 class BusinessView(generics.ListCreateAPIView):
+    permission_clases = [IsAuthenticated]
     queryset = Business.objects.all()
     serializer_class = BusinessSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class BusinessDetailView(generics.RetrieveDestroyAPIView):
     queryset = Business.objects.all()
