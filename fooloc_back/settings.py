@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'api'
 ]
 
@@ -130,3 +131,15 @@ MEDIA_ROOT = os.path.join(os.path.dirname(Path(__file__).resolve().parent), 'med
 
 # URL used to access the media
 MEDIA_URL = '/media/'
+
+# Default authentication setted for TokenAuthentication on settings. This       
+# configuration is made to allow Authentication by Token when using authenticate
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+AUTH_USER_MODEL = 'api.User'
+
+AUTHENTICATION_BACKENDS = ['api.auth_backends.EmailBackend']

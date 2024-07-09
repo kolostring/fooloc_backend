@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import User_APIView, User_APIView_Detail
+from django.conf.urls.static import static
+from .views import LoginView, RegistrationView, LogoutView
+from django.conf import settings
 
 app_name = 'api'
 urlpatterns = [
-    path('user', User_APIView.as_view()), 
-    path('user/<int:pk>/', User_APIView_Detail.as_view()),   
-]
+    path('account/register', RegistrationView.as_view()), 
+    path('account/login', LoginView.as_view()),   
+    path('account/logout', LogoutView.as_view()),   
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
