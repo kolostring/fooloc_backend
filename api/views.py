@@ -61,3 +61,15 @@ class LogoutView(APIView):
     request.auth.delete()
     
     return Response({'msg': 'logged out'}, status=status.HTTP_200_OK)
+  
+class SessionView(APIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = UserSerializers
+
+  def get(self, request):
+    user = request.user
+    return Response({
+      'username': user.username, 
+      'email': user.email,
+      'image_url': user.image_url.url
+      }, status=status.HTTP_201_CREATED)
