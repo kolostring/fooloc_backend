@@ -71,5 +71,5 @@ class SessionView(APIView):
     return Response({
       'username': user.username, 
       'email': user.email,
-      'image_url': user.image_url.url
+      'image_url': user.image_url.url if user.image_url else ""
       }, status=status.HTTP_201_CREATED)
