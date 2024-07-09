@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import User
+from api.models import User, Business
 
 # The Serializers transform models into native Python datatypes for easy 
 # convertion into JSON.
@@ -10,6 +10,7 @@ class UserSerializers(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ['username', 'email', 'image_url', 'password']
+    extra_kwargs = {'password': {'write_only': True}}
 
   def create(self, validated_data):
     # Call the create_user method from UserManager
@@ -19,3 +20,14 @@ class UserSerializers(serializers.ModelSerializer):
     user.set_password(validated_data['password'])
     user.save()
     return user
+  
+class BusinessSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = Business
+      fields = "__all__"
+
+class BusinessOwnerSerializer(serializers.ModelSerializer):
+  user = UserSerializers()
+  class Meta:
+      model = Business
+      fields = "__all__"

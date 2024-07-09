@@ -1,13 +1,14 @@
-from .serializers import UserSerializers
-from .models import User
+from .serializers import UserSerializers, BusinessSerializer, BusinessOwnerSerializer
 from django.contrib.auth import authenticate
+from .models import Business
 
 # rest_framework must be included on settings.INSTALLED_APPS
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 # rest_framework.auth must be included on settings.INSTALLED_APPS
 from rest_framework.authtoken.models import Token
@@ -73,3 +74,30 @@ class SessionView(APIView):
       'email': user.email,
       'image_url': user.image_url.url if user.image_url else ""
       }, status=status.HTTP_201_CREATED)
+
+
+# Business related Views
+class BusinessView(APIView):
+  permission_classes = [IsAuthenticatedOrReadOnly]
+  serializer_class = BusinessSerializer
+  
+  def get(self, request):
+    serializer = BusinessOwnerSerializer(Business.objects.all(), many=True)
+    return Response({'businesses': serializer.data}, status=status.HTTP_202_ACCEPTED);
+  
+  def post(self, request):
+    if 'name' not in request.data or 'description' not in request.data:
+      return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
+    name = request.POST['name']
+    description = request.POST['description']
+
+    data = {
+      "name": name,
+      "description": description,
+      "user": request.user.id
+    }
+    serializer = self.serializer_class(data=data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response({'msg': 'Successful business registration'}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
