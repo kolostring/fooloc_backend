@@ -57,6 +57,7 @@ class User(AbstractBaseUser):
 class Business(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image_url = models.ImageField(upload_to=upload_to, blank=True, null=True)
     description = models.TextField()
 
 
